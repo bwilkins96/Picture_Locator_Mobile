@@ -3,8 +3,8 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { PictureDataService } from '../services/picture-data.service';
+import { CameraService } from '../services/camera.service';
 
 @Component({
   selector: 'app-tab2',
@@ -15,24 +15,10 @@ import { PictureDataService } from '../services/picture-data.service';
 })
 export class Tab2Page {
 
-  constructor(private dataService: PictureDataService) {}
-
-  async getPicture() {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: true,
-        resultType: CameraResultType.Uri,
-        source: CameraSource.Camera
-      });
-      return image;
-    } catch {
-      return false;
-    }
-  }
+  constructor(private dataService: PictureDataService, private cameraService: CameraService) {}
 
   async addPicture() {
-    const image = await this.getPicture();    
+    const image = await this.cameraService.getPicture();    
    
     if (image) {
       this.dataService.addPicture(image);

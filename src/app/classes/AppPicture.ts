@@ -36,8 +36,6 @@ export class AppPicture {
       const loc = this.location;
       let locStr: string;
   
-      console.log(loc);
-  
       if (loc) {
         locStr = `${loc.road}, ${loc.county}, ${loc.state}, ${loc.postcode}, ${loc.country_code.toUpperCase()}`;
       } else if (this.coords) {
