@@ -2,8 +2,18 @@ import { Component } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-import { Geolocation } from '@capacitor/geolocation';
+import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
+import { Geolocation, Position } from '@capacitor/geolocation';
+
+class AppPicture {
+  picture: Photo;
+  coords: Position['coords'];
+
+  constructor(picture: Photo, coords: Position['coords']) {
+    this.picture = picture;
+    this.coords = coords;
+  }
+}
 
 @Component({
   selector: 'app-tab2',
@@ -44,7 +54,9 @@ export class Tab2Page {
     const image = await this.getPicture();    
     const coordinates = await this.getCoords();
     
-    console.log(image);
-    console.log(coordinates);
+    if (image && coordinates) {
+      const appPicture = new AppPicture(image, coordinates);
+      console.log(appPicture);
+    }
   }
 }
