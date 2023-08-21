@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
+import { CommonModule, PathLocationStrategy } from '@angular/common';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 
 import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
@@ -13,6 +14,10 @@ class AppPicture {
     this.picture = picture;
     this.coords = coords;
   }
+
+  getLatLong() {
+    return `(${this.coords.latitude}, ${this.coords.longitude})`;
+  }
 }
 
 @Component({
@@ -20,9 +25,11 @@ class AppPicture {
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
   standalone: true,
-  imports: [IonicModule, ExploreContainerComponent]
+  imports: [IonicModule, ExploreContainerComponent, CommonModule]
 })
 export class Tab2Page {
+
+  images: AppPicture[] = [];
 
   constructor() {}
 
@@ -34,7 +41,6 @@ export class Tab2Page {
         resultType: CameraResultType.Uri,
         source: CameraSource.Camera
       });
-      
       return image;
     } catch {
       return false;
@@ -56,7 +62,11 @@ export class Tab2Page {
     
     if (image && coordinates) {
       const appPicture = new AppPicture(image, coordinates);
-      console.log(appPicture);
+      this.images.push(appPicture);
     }
   }
+
+  deletePicture(idx: number) {
+    this.images.splice(idx, 1);
+  } 
 }

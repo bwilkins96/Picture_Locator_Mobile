@@ -13,6 +13,23 @@
     </ion-toolbar>
   </ion-header>
 
+  <ion-list *ngFor="let image of images; index as i"> 
+    
+    <ion-item-sliding>
+      <ion-img [src]="image.picture.webPath"></ion-img>
+      <ion-item>
+        <ion-label>
+          {{ image.getLatLong() }}
+        </ion-label>
+      </ion-item>
+
+      <ion-item-options>
+        <ion-item-option color="danger" (click)="deletePicture(i)">Delete</ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+  </ion-list>
+
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="addPicture()">
       <ion-icon name="add"></ion-icon>
