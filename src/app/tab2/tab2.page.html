@@ -13,11 +13,11 @@
     </ion-toolbar>
   </ion-header>
 
-  <div class="ion-text-center" *ngIf="images.length === 0">
+  <div class="ion-text-center" *ngIf="loadImages().length === 0">
     <h5>There are no images yet!</h5>
   </div>
 
-  <ion-list *ngFor="let image of images; index as i"> 
+  <ion-list *ngFor="let image of loadImages(); index as i"> 
     <ion-item-sliding>
       <ion-img [src]="image.picture.webPath"></ion-img>
       <ion-item>

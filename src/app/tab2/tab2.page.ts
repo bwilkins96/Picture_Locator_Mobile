@@ -3,58 +3,8 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 
-import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
-import { Geolocation, Position } from '@capacitor/geolocation';
-
-class AppPicture {
-  picture: Photo;
-  coords: Position['coords'];
-  location: any;
-
-  constructor(picture: Photo, coords: Position['coords']) {
-    this.picture = picture;
-    this.coords = coords;
-    
-    this.reverseGeocode().then(res => {
-      this.location = res;
-    });
-  }
-
-  private async reverseGeocode() {
-    const [lat, long] = this.getLatLong();
-
-    try {
-      const res = await fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${long}`);
-      const result = await res.json();
-
-      return result.address;
-    } catch {
-      return null;
-    }
-  }
-
-  getLatLong() {
-    return [this.coords.latitude, this.coords.longitude];
-  }
-
-  getLocationString() {
-    const loc = this.location;
-    let locStr: string;
-
-    console.log(loc);
-
-    if (loc) {
-      locStr = `${loc.road}, ${loc.county}, ${loc.state}, ${loc.postcode}, ${loc.country_code.toUpperCase()}`;
-    } else if (this.coords) {
-      const [lat, long] = this.getLatLong();
-      locStr = `(${lat}, ${long})`;
-    } else {
-      locStr = 'Location information unavailable'
-    }
-
-    return locStr;
-  }
-}
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { PictureDataService } from '../services/picture-data.service';
 
 @Component({
   selector: 'app-tab2',
@@ -65,9 +15,7 @@ class AppPicture {
 })
 export class Tab2Page {
 
-  images: AppPicture[] = [];
-
-  constructor() {}
+  constructor(private dataService: PictureDataService) {}
 
   async getPicture() {
     try {
@@ -83,26 +31,19 @@ export class Tab2Page {
     }
   }
 
-  async getCoords() {
-    try {
-      const position = await Geolocation.getCurrentPosition();
-      return position.coords; 
-    } catch {
-      return false;
-    }
-  }
-
   async addPicture() {
     const image = await this.getPicture();    
-    const coordinates = await this.getCoords();
-    
-    if (image && coordinates) {
-      const appPicture = new AppPicture(image, coordinates);
-      this.images.push(appPicture);
+   
+    if (image) {
+      this.dataService.addPicture(image);
     }
   }
 
   deletePicture(idx: number) {
-    this.images.splice(idx, 1);
-  } 
+    this.dataService.deletePicture(idx);
+  }
+  
+  loadImages() {
+    return this.dataService.getImages();
+  }
 }
