@@ -13,7 +13,11 @@ export class PictureDataService {
 
   constructor() { }
 
-  async getCoords() {
+  getImages() {
+    return this.images;
+  }
+
+  private async getCoords() {
     try {
       const position = await Geolocation.getCurrentPosition();
       return position.coords; 
@@ -22,11 +26,26 @@ export class PictureDataService {
     }
   }
 
+  // Get location info from long/lat with geocode API
+  private async reverseGeocode(lat: number, long: number) {
+    try {
+      const res = await fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${long}`);
+      const result = await res.json();
+
+      return result.address;
+    } catch {
+      return null;
+    }
+  }
+
   async addPicture(image: Photo) {    
     const coordinates = await this.getCoords();
     
     if (image && coordinates) {
-      const appPicture = new AppPicture(image, coordinates);
+      const [lat, long] = [coordinates.latitude, coordinates.longitude];
+      const location = await this.reverseGeocode(lat, long);
+
+      const appPicture = new AppPicture(image, coordinates, location);
       this.images.push(appPicture);
     }
   }
@@ -34,8 +53,4 @@ export class PictureDataService {
   deletePicture(idx: number) {
     this.images.splice(idx, 1);
   } 
-
-  getImages() {
-    return this.images;
-  }
 }

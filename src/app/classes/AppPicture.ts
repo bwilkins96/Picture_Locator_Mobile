@@ -6,26 +6,10 @@ export class AppPicture {
     coords: Position['coords'];
     location: any;
   
-    constructor(picture: Photo, coords: Position['coords']) {
+    constructor(picture: Photo, coords: Position['coords'], location: any) {
       this.picture = picture;
       this.coords = coords;
-      
-      this.reverseGeocode().then(res => {
-        this.location = res;
-      });
-    }
-  
-    private async reverseGeocode() {
-      const [lat, long] = this.getLatLong();
-  
-      try {
-        const res = await fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${long}`);
-        const result = await res.json();
-  
-        return result.address;
-      } catch {
-        return null;
-      }
+      this.location = location;
     }
   
     getLatLong() {

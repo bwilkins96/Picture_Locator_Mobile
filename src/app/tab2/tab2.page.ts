@@ -17,6 +17,10 @@ export class Tab2Page {
 
   constructor(private dataService: PictureDataService, private cameraService: CameraService) {}
 
+  loadImages() {
+    return this.dataService.getImages();
+  }
+
   async addPicture() {
     const image = await this.cameraService.getPicture();    
    
@@ -27,9 +31,5 @@ export class Tab2Page {
 
   deletePicture(idx: number) {
     this.dataService.deletePicture(idx);
-  }
-  
-  loadImages() {
-    return this.dataService.getImages();
   }
 }
