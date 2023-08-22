@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Geolocation } from '@capacitor/geolocation';
 import { Photo } from '@capacitor/camera';
-
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
 
-import { AppPicture, Coordinates, PictureInfo } from '../classes/AppPicture';
+import { GeolocationService } from './geolocation.service';
+import { AppPicture, PictureInfo } from '../classes/AppPicture';
 
 @Injectable({
   providedIn: 'root'
@@ -15,36 +14,10 @@ export class PictureDataService {
   private images: AppPicture[] = [];
   private IMAGE_STORAGE: string = 'images';
 
-  constructor() { }
+  constructor( private geoService: GeolocationService) { }
 
   getImages() {
     return this.images;
-  }
-
-  private async getCoords() {
-    try {
-      const position = await Geolocation.getCurrentPosition();
-      const coords: Coordinates = { 
-        'latitude': position.coords.latitude,
-        'longitude': position.coords.longitude
-      }; 
-
-      return coords;
-    } catch {
-      return false;
-    }
-  }
-
-  // Get location info from long/lat with geocode API
-  private async reverseGeocode(lat: number, long: number) {
-    try {
-      const res = await fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${long}`);
-      const result = await res.json();
-
-      return result.address;
-    } catch {
-      return null;
-    }
   }
 
   private saveImages() {
@@ -54,13 +27,37 @@ export class PictureDataService {
     });
   }
 
+  async loadSavedImages() {
+    const { value } = await Preferences.get({ key: this.IMAGE_STORAGE });
+    this.images = (value ? JSON.parse(value): []) as AppPicture[];
+    this.restoreLoadedImages();
+
+    for (let image of this.images) {
+      const readFile = await Filesystem.readFile({
+        path: image.picture.filePath,
+        directory: Directory.Data
+      });
+
+      image.picture.webPath = `data:image/jpeg;base64,${readFile.data}`;
+    }
+  }
+
+  // Restore information loaded from memory as instances of AppPicture class
+  private restoreLoadedImages() {
+    for(let i = 0; i < this.images.length; i++) {
+      const image = this.images[i];
+
+      this.images[i] = new AppPicture(image.picture, image.coords, image.location);
+    }
+  }
+
   async addPicture(image: Photo) {    
-    const coordinates = await this.getCoords();
+    const coordinates = await this.geoService.getCoords();
     const picInfo: PictureInfo = await this.savePicture(image);
     
     if (picInfo && coordinates) {
       const [lat, long] = [coordinates.latitude, coordinates.longitude];
-      const location = await this.reverseGeocode(lat, long);
+      const location = await this.geoService.reverseGeocode(lat, long);
 
       const appPicture = new AppPicture(picInfo, coordinates, location);
       this.images.unshift(appPicture);
@@ -90,6 +87,7 @@ export class PictureDataService {
     };
   }
 
+  // Get picture data as base64 data
   private async readAsBase64(photo: Photo) {
     const res = await fetch(photo.webPath!);
     const blob = await res.blob();
@@ -112,29 +110,5 @@ export class PictureDataService {
     });
 
     return base64Promise;
-  }
-
-  async loadSavedImages() {
-    const { value } = await Preferences.get({ key: this.IMAGE_STORAGE });
-    this.images = (value ? JSON.parse(value): []) as AppPicture[];
-    this.restoreLoadedImages();
-
-    for (let image of this.images) {
-      const readFile = await Filesystem.readFile({
-        path: image.picture.filePath,
-        directory: Directory.Data
-      });
-
-      image.picture.webPath = `data:image/jpeg;base64,${readFile.data}`;
-    }
-  }
-
-  // Restore information loaded from memory as instances of AppPicture class
-  private restoreLoadedImages() {
-    for(let i = 0; i < this.images.length; i++) {
-      const image = this.images[i];
-
-      this.images[i] = new AppPicture(image.picture, image.coords, image.location);
-    }
   }
 }
