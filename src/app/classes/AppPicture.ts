@@ -1,12 +1,19 @@
-import { Position } from '@capacitor/geolocation';
-import { Photo } from '@capacitor/camera';
+export interface Coordinates {
+  latitude: number,
+  longitude: number
+} 
+
+export interface PictureInfo {
+  filePath: string,
+  webPath: string
+}
 
 export class AppPicture {
-    picture: any;
-    coords: Position['coords'];
+    picture: PictureInfo;
+    coords: Coordinates;
     location: any;
   
-    constructor(picture: any, coords: Position['coords'], location: any) {
+    constructor(picture: PictureInfo, coords: Coordinates, location: any) {
       this.picture = picture;
       this.coords = coords;
       this.location = location;

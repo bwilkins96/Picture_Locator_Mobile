@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { Photo } from '@capacitor/camera';
 
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
 
-import { AppPicture } from '../classes/AppPicture';
+import { AppPicture, Coordinates, PictureInfo } from '../classes/AppPicture';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,12 @@ export class PictureDataService {
   private async getCoords() {
     try {
       const position = await Geolocation.getCurrentPosition();
-      return position.coords; 
+      const coords: Coordinates = { 
+        'latitude': position.coords.latitude,
+        'longitude': position.coords.longitude
+      }; 
+
+      return coords;
     } catch {
       return false;
     }
@@ -51,13 +56,13 @@ export class PictureDataService {
 
   async addPicture(image: Photo) {    
     const coordinates = await this.getCoords();
-    const pic = await this.savePicture(image);
+    const picInfo: PictureInfo = await this.savePicture(image);
     
-    if (image && coordinates) {
+    if (picInfo && coordinates) {
       const [lat, long] = [coordinates.latitude, coordinates.longitude];
       const location = await this.reverseGeocode(lat, long);
 
-      const appPicture = new AppPicture(pic, coordinates, location);
+      const appPicture = new AppPicture(picInfo, coordinates, location);
       this.images.unshift(appPicture);
 
       this.saveImages();
@@ -81,7 +86,7 @@ export class PictureDataService {
 
     return {
       filePath: fileName,
-      webPath: photo.webPath
+      webPath: photo.webPath!
     };
   }
 
