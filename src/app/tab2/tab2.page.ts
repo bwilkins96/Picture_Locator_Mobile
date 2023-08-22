@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, LoadingController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 
@@ -16,7 +16,10 @@ import { CameraService } from '../services/camera.service';
 export class Tab2Page {
   initialLoad: boolean = false;
 
-  constructor(private dataService: PictureDataService, private cameraService: CameraService) {}
+  constructor(
+    private dataService: PictureDataService, 
+    private cameraService: CameraService, 
+    private loadingCtrl: LoadingController) {}
 
   async ngOnInit() {
     await this.dataService.loadSavedImages();
@@ -35,7 +38,13 @@ export class Tab2Page {
     const image = await this.cameraService.getPicture();    
    
     if (image) {
-      this.dataService.addPicture(image);
+      const loading = await this.loadingCtrl.create({
+        message: 'Getting geolocation data...'
+      });
+
+      loading.present()
+      await this.dataService.addPicture(image);
+      loading.dismiss();
     }
   }
 

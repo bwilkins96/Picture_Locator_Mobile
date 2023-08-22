@@ -71,6 +71,7 @@ export class PictureDataService {
     this.saveImages();
   } 
 
+  // Save picture to local memory
   private async savePicture(photo: Photo) {
     const base64Data = await this.readAsBase64(photo);
 
