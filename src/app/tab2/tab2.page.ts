@@ -14,14 +14,21 @@ import { CameraService } from '../services/camera.service';
   imports: [IonicModule, ExploreContainerComponent, CommonModule]
 })
 export class Tab2Page {
+  initialLoad: boolean = false;
+
   constructor(private dataService: PictureDataService, private cameraService: CameraService) {}
 
   async ngOnInit() {
     await this.dataService.loadSavedImages();
+    this.initialLoad = true;
   }
 
   loadImages() {
-    return this.dataService.getImages();
+    if (this.initialLoad) {
+      return this.dataService.getImages();
+    }
+
+    return [];
   }
 
   async addPicture() {
