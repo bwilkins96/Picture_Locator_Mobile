@@ -2,11 +2,11 @@ import { Position } from '@capacitor/geolocation';
 import { Photo } from '@capacitor/camera';
 
 export class AppPicture {
-    picture: Photo;
+    picture: any;
     coords: Position['coords'];
     location: any;
   
-    constructor(picture: Photo, coords: Position['coords'], location: any) {
+    constructor(picture: any, coords: Position['coords'], location: any) {
       this.picture = picture;
       this.coords = coords;
       this.location = location;
