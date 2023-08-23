@@ -31,7 +31,7 @@ export class Tab3Page {
       const loc = await this.geoService.reverseGeocode(coords.latitude, coords.longitude);
       
       this.locationInfo = {
-        locationStr: `${loc.house_number}, ${loc.road}, ${loc.county}, ${loc.state}, ${loc.postcode}, ${loc.country_code.toUpperCase()}`,
+        locationStr: `${loc.road}, ${loc.county}, ${loc.state}, ${loc.postcode}, ${loc.country_code.toUpperCase()}`,
         latStr: `Latitude: ${coords.latitude},`,
         longStr: `Longitude: ${coords.longitude}`
       };
