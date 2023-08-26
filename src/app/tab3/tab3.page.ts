@@ -6,6 +6,12 @@ import { ExploreContainerComponent } from '../explore-container/explore-containe
 import { GeolocationService } from '../services/geolocation.service';
 import { LoadingService } from '../services/loading.service';
 
+interface locationInfo {
+  locationStr: string,
+  latStr: string,
+  longStr: string
+}
+
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
@@ -14,7 +20,7 @@ import { LoadingService } from '../services/loading.service';
   imports: [IonicModule, ExploreContainerComponent, CommonModule],
 })
 export class Tab3Page {
-  locationInfo: any = null;
+  locationInfo: locationInfo | null = null;
 
   constructor(
     private geoService: GeolocationService, 
@@ -28,10 +34,14 @@ export class Tab3Page {
       const loc = await this.geoService.reverseGeocode(coords.latitude, coords.longitude);
       
       this.locationInfo = {
-        locationStr: `${loc.road}, ${loc.county}, ${loc.state}, ${loc.postcode}, ${loc.country_code.toUpperCase()}`,
+        locationStr: 'Precise location unavailable',
         latStr: `Latitude: ${coords.latitude},`,
         longStr: `Longitude: ${coords.longitude}`
       };
+
+      if (loc) {
+        this.locationInfo.locationStr = loc.getLocationString();
+      }
     }
 
     await this.loadingService.dismiss();

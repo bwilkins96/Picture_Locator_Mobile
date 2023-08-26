@@ -4,7 +4,7 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Preferences } from '@capacitor/preferences';
 
 import { GeolocationService } from './geolocation.service';
-import { AppPicture, PictureInfo } from '../classes/AppPicture';
+import { AppPicture, PictureInfo, Location } from '../classes/AppPicture';
 
 @Injectable({
   providedIn: 'root'
@@ -46,8 +46,13 @@ export class PictureDataService {
   private restoreLoadedImages() {
     for(let i = 0; i < this.images.length; i++) {
       const image = this.images[i];
+      let location = image.location;
+      
+      if (image.location) {
+        location = new Location(image.location.data);
+      }
 
-      this.images[i] = new AppPicture(image.picture, image.coords, image.location);
+      this.images[i] = new AppPicture(image.picture, image.coords, location);
     }
   }
 

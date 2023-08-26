@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
-import { Coordinates } from '../classes/AppPicture';
+import { Coordinates, Location } from '../classes/AppPicture';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +29,7 @@ export class GeolocationService {
       const res = await fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${long}`);
       const result = await res.json();
 
-      return result.address;
+      return new Location(result.address);
     } catch {
       return null;
     }
