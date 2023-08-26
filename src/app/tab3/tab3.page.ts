@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicModule, LoadingController } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 
 import { GeolocationService } from '../services/geolocation.service';
+import { LoadingService } from '../services/loading.service';
 
 @Component({
   selector: 'app-tab3',
@@ -17,14 +18,10 @@ export class Tab3Page {
 
   constructor(
     private geoService: GeolocationService, 
-    private loadingCtrl: LoadingController) {}
+    private loadingService: LoadingService) {}
 
   async getCurrentLocation() {
-    const loading = await this.loadingCtrl.create({
-      message: 'Getting geolocation data...'
-    });
-
-    loading.present();
+    await this.loadingService.present();
     const coords = await this.geoService.getCoords();
 
     if (coords) {
@@ -37,6 +34,6 @@ export class Tab3Page {
       };
     }
 
-    loading.dismiss();
+    await this.loadingService.dismiss();
   }
 }
