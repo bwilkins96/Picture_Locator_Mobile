@@ -18,12 +18,14 @@ export class LoadingService {
   }
 
   async present() {
-    if (!this.loading) await this.initLoading();
+    await this.initLoading();
     await this.loading!.present()
   }
 
   async dismiss() {
-    await this.loading!.dismiss();
-    this.loading = null;
+    if (this.loading) {
+      await this.loading.dismiss();
+      this.loading = null;
+    }
   }
 }

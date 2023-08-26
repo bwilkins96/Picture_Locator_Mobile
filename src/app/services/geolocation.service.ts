@@ -24,7 +24,9 @@ export class GeolocationService {
   }
 
   // Get location info from long/lat with geocode API
-  async reverseGeocode(lat: number, long: number) {
+  async reverseGeocode(coords: Coordinates) {
+    const [lat, long] = [coords.latitude, coords.longitude];
+
     try {
       const res = await fetch(`https://geocode.maps.co/reverse?lat=${lat}&lon=${long}`);
       const result = await res.json();

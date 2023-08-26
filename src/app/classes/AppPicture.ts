@@ -32,10 +32,6 @@ export class AppPicture {
       this.location = location;
     }
   
-    getLatLong() {
-      return [this.coords.latitude, this.coords.longitude];
-    }
-  
     getLocationString() {
       const loc = this.location;
       let locStr: string;
@@ -43,7 +39,7 @@ export class AppPicture {
       if (loc) {
         locStr = loc.getLocationString();
       } else if (this.coords) {
-        const [lat, long] = this.getLatLong();
+        const [lat, long] = [this.coords.latitude, this.coords.longitude];
         locStr = `(${lat}, ${long})`;
       } else {
         locStr = 'Location information unavailable'

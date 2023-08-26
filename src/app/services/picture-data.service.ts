@@ -61,8 +61,7 @@ export class PictureDataService {
     const picInfo: PictureInfo = await this.savePicture(image);
     
     if (picInfo && coordinates) {
-      const [lat, long] = [coordinates.latitude, coordinates.longitude];
-      const location = await this.geoService.reverseGeocode(lat, long);
+      const location = await this.geoService.reverseGeocode(coordinates);
 
       const appPicture = new AppPicture(picInfo, coordinates, location);
       this.images.unshift(appPicture);
