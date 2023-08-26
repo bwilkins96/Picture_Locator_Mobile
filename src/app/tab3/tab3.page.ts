@@ -34,7 +34,7 @@ export class Tab3Page {
       const loc = await this.geoService.reverseGeocode(coords);
       
       this.locationInfo = {
-        locationStr: 'Precise location unavailable',
+        locationStr: 'Precise address unavailable',
         latStr: `Latitude: ${coords.latitude},`,
         longStr: `Longitude: ${coords.longitude}`
       };
