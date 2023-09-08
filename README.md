@@ -4,5 +4,7 @@ The app stores user-taken pictures with the addresses where the pictures were ta
 
 # To Run 
 Download this repository and cd into the local directory
+
 Run npm install
+
 Run ionic serve - (This requires that ionic v7 is installed: npm install -g @ionic/cli)
